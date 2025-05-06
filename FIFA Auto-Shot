@@ -1,0 +1,85 @@
+
+// GPC Online Library 
+// Author: NØSLEN
+// Date: 05/06/2025
+// EA Sports FC 25 Timed Shot Green Finish
+// Simulates pressing shoot (Circle), then re-pressing for green timing for
+// different types of shots.
+
+
+/* TODO: 
+ - running strides (running animation)
+ - Deicrme su Latency para personalizar su timing
+ - Irse con su muñeco a arena a probar 
+*/
+
+combo vibrate {
+    set_rumble(RUMBLE_A, 100);
+    wait(100);
+    set_rumble(RUMBLE_A, 0);
+}
+
+combo normal_shot {
+    set_val(PS5_CIRCLE, 100); // Initial shot
+    wait(60);                 // Hold shoot for 60 ms (can adjust)
+    set_val(PS5_CIRCLE, 0);   // Release
+    wait(420);                // Wait before timed second press (adjust to match green window) 480 - latency
+    set_val(PS5_CIRCLE, 100); // Second press for timed finish
+    wait(60);                 // Hold again
+    set_val(PS5_CIRCLE, 0);   // Release
+
+    combo_run(vibrate);   
+}
+
+combo finesse_shot {
+    set_val(PS5_R1, 100);      
+    set_val(PS5_CIRCLE, 100);  
+    wait(60);                  
+    set_val(PS5_CIRCLE, 0);   
+    wait(420);                 
+    set_val(PS5_CIRCLE, 100);  
+    wait(60);                  
+    set_val(PS5_CIRCLE, 0);    
+    set_val(PS5_R1, 0);
+
+    combo_run(vibrate);          
+}
+
+combo power_shot {
+    set_val(PS5_L1, 100);       
+    set_val(PS5_R1, 100);        
+    set_val(PS5_CIRCLE, 100);   
+    wait(60);                   
+    set_val(PS5_CIRCLE, 0);      
+    wait(420);                  
+    set_val(PS5_CIRCLE, 100);    
+    wait(60);                    
+    set_val(PS5_CIRCLE, 0);      
+    set_val(PS5_L1, 0);          
+    set_val(PS5_R1, 0);
+
+    combo_run(vibrate);  
+}
+
+
+main {
+    
+    if (get_val(PS5_CIRCLE) && get_val(PS5_R1) && !get_val(PS5_L1)) {
+        combo_run(finesse_shot);
+        set_val(PS5_CIRCLE, 0);
+        set_val(PS5_R1, 0);
+    }
+
+    if (get_val(PS5_CIRCLE) && get_val(PS5_R1) && get_val(PS5_L1)) {
+        combo_run(power_shot);
+        set_val(PS5_CIRCLE, 0);
+        set_val(PS5_R1, 0);
+        set_val(PS5_L1, 0);
+    }
+
+    if (get_val(PS5_CIRCLE) && !get_val(PS5_R1) && !get_val(PS5_L1)) {
+        combo_run(normal_shot);
+        set_val(PS5_CIRCLE, 0);
+    }
+
+}
